@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{% if object %}Редактирование товара{% else %}Добавление товара{% endif %}{% endblock %}
+{% block h1 %}{% if object %}Редактирование товара{% else %}Добавление товара{% endif %}{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <form method="post" enctype="multipart/form-data" class="form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="actions">
+            <button class="btn" type="submit">Сохранить</button>
+            <a class="btn secondary" href="{% url 'product_list' %}">Назад</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

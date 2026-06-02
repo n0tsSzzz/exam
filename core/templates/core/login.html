@@ -1,0 +1,25 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Вход - ООО «Обувь»{% endblock %}
+{% block h1 %}Вход в систему{% endblock %}
+
+{% block content %}
+<section class="panel narrow">
+    <form method="post" class="form">
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="message error">Неверный логин или пароль.</div>
+        {% endif %}
+        <label>
+            Логин
+            <input type="text" name="username" autocomplete="username" required>
+        </label>
+        <label>
+            Пароль
+            <input type="password" name="password" autocomplete="current-password" required>
+        </label>
+        <button class="btn" type="submit">Войти</button>
+    </form>
+    <a class="btn secondary" href="{% url 'product_list' %}">Войти как гость</a>
+</section>
+{% endblock %}

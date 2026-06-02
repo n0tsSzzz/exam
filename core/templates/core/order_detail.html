@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Заказ №{{ order.id }}{% endblock %}
+{% block h1 %}Заказ №{{ order.id }}{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <p>Дата заказа: {{ order.order_date }}</p>
+    <p>Дата доставки: {{ order.delivery_date }}</p>
+    <p>Клиент: {{ order.client_name|default:order.client.full_name }}</p>
+    <p>Пункт выдачи: {{ order.pickup_point.address }}</p>
+    <p>Код получения: {{ order.pickup_code }}</p>
+    <p>Статус: {{ order.get_status_display }}</p>
+</section>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Товар</th>
+            <th>Количество</th>
+            <th>Цена</th>
+            <th>Сумма</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.count }}</td>
+                <td>{{ item.product.final_price|floatformat:2 }} руб.</td>
+                <td>{{ item.total_price|floatformat:2 }} руб.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p class="total">Итого: {{ order.total_price|floatformat:2 }} руб.</p>
+<div class="actions">
+    <a class="btn secondary" href="{% url 'order_list' %}">Назад</a>
+    {% if can_edit_orders %}
+        <a class="btn" href="{% url 'order_edit' order.pk %}">Редактировать</a>
+        <a class="btn danger" href="{% url 'order_delete' order.pk %}">Удалить</a>
+    {% endif %}
+</div>
+{% endblock %}

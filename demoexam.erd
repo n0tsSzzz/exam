@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<diagram version="1" name="demoexam">
+	<entities>
+		<data-source id="postgres-jdbc-19e84c8295a-1683bc60fc7a9a1e">
+			<entity id="1" name="core_category" fq-name="public.core_category">
+				<path name="public"/>
+				<path name="demoexam_26"/>
+			</entity>
+			<entity id="2" name="core_manufacturer" fq-name="public.core_manufacturer">
+				<path name="public"/>
+				<path name="demoexam_26"/>
+			</entity>
+			<entity id="3" name="core_order" fq-name="public.core_order">
+				<path name="public"/>
+				<path name="demoexam_26"/>
+			</entity>
+			<entity id="4" name="core_orderitem" fq-name="public.core_orderitem">
+				<path name="public"/>
+				<path name="demoexam_26"/>
+			</entity>
+			<entity id="5" name="core_pickuppoint" fq-name="public.core_pickuppoint">
+				<path name="public"/>
+				<path name="demoexam_26"/>
+			</entity>
+			<entity id="6" name="core_product" fq-name="public.core_product">
+				<path name="public"/>
+				<path name="demoexam_26"/>
+			</entity>
+			<entity id="7" name="core_role" fq-name="public.core_role">
+				<path name="public"/>
+				<path name="demoexam_26"/>
+			</entity>
+			<entity id="8" name="core_supplier" fq-name="public.core_supplier">
+				<path name="public"/>
+				<path name="demoexam_26"/>
+			</entity>
+			<entity id="9" name="core_user" fq-name="public.core_user">
+				<path name="public"/>
+				<path name="demoexam_26"/>
+			</entity>
+		</data-source>
+	</entities>
+	<relations>
+		<relation name="core_product_category_id_b9d8ff9f_fk_core_category_id" fq-name="public.core_product.core_product_category_id_b9d8ff9f_fk_core_category_id" type="fk" pk-ref="1" fk-ref="6"/>
+		<relation name="core_product_manufacturer_id_d625b069_fk_core_manufacturer_id" fq-name="public.core_product.core_product_manufacturer_id_d625b069_fk_core_manufacturer_id" type="fk" pk-ref="2" fk-ref="6"/>
+		<relation name="core_orderitem_order_id_30929c10_fk_core_order_id" fq-name="public.core_orderitem.core_orderitem_order_id_30929c10_fk_core_order_id" type="fk" pk-ref="3" fk-ref="4"/>
+		<relation name="core_order_pickup_point_id_a5e2e98b_fk_core_pickuppoint_id" fq-name="public.core_order.core_order_pickup_point_id_a5e2e98b_fk_core_pickuppoint_id" type="fk" pk-ref="5" fk-ref="3"/>
+		<relation name="core_orderitem_product_id_0c2047cd_fk_core_product_id" fq-name="public.core_orderitem.core_orderitem_product_id_0c2047cd_fk_core_product_id" type="fk" pk-ref="6" fk-ref="4"/>
+		<relation name="core_user_role_id_8de62872_fk_core_role_id" fq-name="public.core_user.core_user_role_id_8de62872_fk_core_role_id" type="fk" pk-ref="7" fk-ref="9"/>
+		<relation name="core_product_supplier_id_493af3ba_fk_core_supplier_id" fq-name="public.core_product.core_product_supplier_id_493af3ba_fk_core_supplier_id" type="fk" pk-ref="8" fk-ref="6"/>
+		<relation name="core_order_client_id_ef19d999_fk_core_user_id" fq-name="public.core_order.core_order_client_id_ef19d999_fk_core_user_id" type="fk" pk-ref="9" fk-ref="3"/>
+	</relations>
+</diagram>

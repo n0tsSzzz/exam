@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Удаление{% endblock %}
+{% block h1 %}Удаление{% endblock %}
+
+{% block content %}
+<section class="panel narrow">
+    <p>Удалить объект: {{ object }}?</p>
+    <form method="post" class="actions">
+        {% csrf_token %}
+        <button class="btn danger" type="submit">Удалить</button>
+        <a class="btn secondary" href="javascript:history.back()">Отмена</a>
+    </form>
+</section>
+{% endblock %}

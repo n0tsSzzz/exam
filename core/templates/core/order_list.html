@@ -1,0 +1,41 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Заказы - ООО «Обувь»{% endblock %}
+{% block h1 %}Заказы{% endblock %}
+
+{% block content %}
+{% if can_edit_orders %}
+<div class="toolbar">
+        <a class="btn" href="{% url 'order_create' %}">Добавить заказ</a>
+</div>
+{% endif %}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Номер</th>
+            <th>Дата заказа</th>
+            <th>Дата доставки</th>
+            <th>Клиент</th>
+            <th>Пункт выдачи</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.order_date }}</td>
+                <td>{{ order.delivery_date }}</td>
+                <td>{{ order.client_name|default:order.client.full_name }}</td>
+                <td>{{ order.pickup_point.address }}</td>
+                <td>{{ order.get_status_display }}</td>
+                <td><a href="{% url 'order_detail' order.pk %}">Открыть</a></td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="7">Заказы не найдены.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
