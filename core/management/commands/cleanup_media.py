@@ -13,6 +13,7 @@ class Command(BaseCommand):
         products_dir = Path(settings.MEDIA_ROOT) / "products"
         products_dir.mkdir(parents=True, exist_ok=True)
 
+        # В БД хранится путь products/file.jpg, а на диске сравниваем только имя файла.
         used_files = {
             Path(photo).name
             for photo in Product.objects.exclude(photo="").values_list("photo", flat=True)

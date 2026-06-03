@@ -6,36 +6,32 @@
 {% block content %}
 {% if can_edit_orders %}
 <div class="toolbar">
-        <a class="btn" href="{% url 'order_create' %}">Добавить заказ</a>
+    <a class="btn" href="{% url 'order_create' %}">Добавить заказ</a>
 </div>
 {% endif %}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Номер</th>
-            <th>Дата заказа</th>
-            <th>Дата доставки</th>
-            <th>Клиент</th>
-            <th>Пункт выдачи</th>
-            <th>Статус</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for order in orders %}
-            <tr>
-                <td>{{ order.id }}</td>
-                <td>{{ order.order_date }}</td>
-                <td>{{ order.delivery_date }}</td>
-                <td>{{ order.client_name|default:order.client.full_name }}</td>
-                <td>{{ order.pickup_point.address }}</td>
-                <td>{{ order.get_status_display }}</td>
-                <td><a href="{% url 'order_detail' order.pk %}">Открыть</a></td>
-            </tr>
-        {% empty %}
-            <tr><td colspan="7">Заказы не найдены.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+<section class="order-list">
+    {% for order in orders %}
+        <article class="order-card">
+            <div class="order-card-main">
+                <span><b>Артикул заказа</b> {{ order.articles_summary|default:"-" }}</span>
+                <span><b>Статус заказа</b> {{ order.get_status_display }}</span>
+                <span><b>Адрес пункта выдачи</b> {{ order.pickup_point.address }}</span>
+                <span><b>Дата заказа</b> {{ order.order_date }}</span>
+                {% if can_edit_orders %}
+                    <div class="actions">
+                        <a href="{% url 'order_edit' order.pk %}">Редактировать</a>
+                        <a href="{% url 'order_delete' order.pk %}">Удалить</a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="order-card-date">
+                <span>Дата доставки</span>
+                <strong>{{ order.delivery_date }}</strong>
+            </div>
+        </article>
+    {% empty %}
+        <p>Заказы не найдены.</p>
+    {% endfor %}
+</section>
 {% endblock %}

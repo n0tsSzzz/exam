@@ -3,7 +3,9 @@ import os
 from datetime import datetime
 from typing import Any
 
+from django.core.management.color import no_style
 from django.core.management.base import BaseCommand
+from django.db import connection
 
 from core.models import (
     Category,
@@ -30,16 +32,9 @@ ROLE_MAP = {
 STATUS_MAP = {
     "новый": Order.STATUS_NEW,
     "new": Order.STATUS_NEW,
-    "в обработке": Order.STATUS_PROCESSING,
-    "processing": Order.STATUS_PROCESSING,
-    "готов к выдаче": Order.STATUS_READY,
-    "ready": Order.STATUS_READY,
-    "выдан": Order.STATUS_DONE,
     "завершен": Order.STATUS_DONE,
+    "выдан": Order.STATUS_DONE,
     "done": Order.STATUS_DONE,
-    "отменен": Order.STATUS_CANCELLED,
-    "отменён": Order.STATUS_CANCELLED,
-    "cancelled": Order.STATUS_CANCELLED,
 }
 
 
@@ -61,6 +56,8 @@ class Command(BaseCommand):
         self.import_products(base_path)
         self.import_users(base_path)
         self.import_orders(base_path)
+        # В CSV заказы приходят с готовыми ID, поэтому sequence нужно сдвинуть после импорта.
+        self.reset_sequences()
 
         self.stdout.write(self.style.SUCCESS("Импорт CSV завершен."))
         return None
@@ -115,6 +112,7 @@ class Command(BaseCommand):
 
                 photo = self.value(row, "photo", "фото")
                 if photo and not photo.startswith("products/"):
+                    # В базе хранится путь относительно MEDIA_ROOT, а в CSV указан только файл.
                     photo = f"products/{photo}"
 
                 Product.objects.update_or_create(
@@ -216,7 +214,8 @@ class Command(BaseCommand):
 
                 OrderItem.objects.filter(order=order).delete()
                 items = self.value(row, "items", "артикул заказа").split(",")
-                for index in range(0, len(items), 2):
+                # Поле "Артикул заказа" хранит пары: артикул, количество; по заданию выводим 2 позиции.
+                for index in range(0, min(len(items), 4), 2):
                     article = items[index].strip()
                     try:
                         count = self.integer(items[index + 1])
@@ -228,9 +227,16 @@ class Command(BaseCommand):
                 if created:
                     self.stdout.write(f"Создан заказ #{order.id}")
 
+    def reset_sequences(self):
+        sequence_sql = connection.ops.sequence_reset_sql(no_style(), [Order])
+        with connection.cursor() as cursor:
+            for sql in sequence_sql:
+                cursor.execute(sql)
+
     def get_pickup_point(self, value):
         value = str(value or "").strip()
         if value.isdigit():
+            # В заказах пункт выдачи может быть записан номером строки из файла, а не ID из БД.
             point = PickupPoint.objects.filter(id=int(value)).first()
             if point:
                 return point
@@ -259,6 +265,7 @@ class Command(BaseCommand):
         return ";" if ";" in first_line else ","
 
     def value(self, row, *names):
+        # Заголовки в выданных CSV отличаются языком и регистром, поэтому сравниваем нормализованно.
         normalized = {self.key(key): value for key, value in row.items() if key}
         for name in names:
             value = normalized.get(self.key(name))

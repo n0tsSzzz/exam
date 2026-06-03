@@ -7,6 +7,12 @@
 <section class="panel">
     <form method="post" enctype="multipart/form-data" class="form">
         {% csrf_token %}
+        {% if object %}
+            <label>
+                ID товара
+                <input type="text" value="{{ object.pk }}" readonly>
+            </label>
+        {% endif %}
         {{ form.as_p }}
         <div class="actions">
             <button class="btn" type="submit">Сохранить</button>

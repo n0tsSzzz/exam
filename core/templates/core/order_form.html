@@ -15,8 +15,27 @@
         <div class="formset">
             {% for item_form in formset %}
                 <div class="formset-row">
-                    {{ item_form.id }}
-                    {{ item_form.as_p }}
+                    {{ item_form.non_field_errors }}
+                    {% for hidden in item_form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    <p>
+                        {{ item_form.product.label_tag }}
+                        {{ item_form.product }}
+                        {{ item_form.product.errors }}
+                    </p>
+                    <p>
+                        {{ item_form.count.label_tag }}
+                        {{ item_form.count }}
+                        {{ item_form.count.errors }}
+                    </p>
+                    {% if item_form.DELETE %}
+                        <label class="checkbox-row" for="{{ item_form.DELETE.id_for_label }}">
+                            <span>Удалить</span>
+                            {{ item_form.DELETE }}
+                        </label>
+                        {{ item_form.DELETE.errors }}
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

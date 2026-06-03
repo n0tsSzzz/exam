@@ -5,6 +5,11 @@ from PIL import Image
 from .models import Order, OrderItem, Product
 
 
+class PhotoClearableFileInput(forms.ClearableFileInput):
+    # Стандартный виджет Django выводит checkbox перед текстом, а в макете нужен обратный порядок.
+    template_name = "core/widgets/clearable_file_input.html"
+
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
@@ -23,6 +28,10 @@ class ProductForm(forms.ModelForm):
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
+            "price": forms.NumberInput(attrs={"min": "0", "step": "0.01"}),
+            "discount": forms.NumberInput(attrs={"min": "0", "max": "100", "step": "0.01"}),
+            "quantity": forms.NumberInput(attrs={"min": "0"}),
+            "photo": PhotoClearableFileInput(),
         }
 
     def clean_price(self):
@@ -64,10 +73,27 @@ class OrderForm(forms.ModelForm):
             "delivery_date": forms.DateInput(attrs={"type": "date"}),
         }
 
+    def clean(self):
+        cleaned_data = super().clean()
+        order_date = cleaned_data.get("order_date")
+        delivery_date = cleaned_data.get("delivery_date")
+
+        # Заказ не может быть доставлен в день оформления или раньше него.
+        if order_date and delivery_date and order_date >= delivery_date:
+            raise forms.ValidationError(
+                "Дата заказа должна быть раньше даты доставки."
+            )
+
+        return cleaned_data
+
+
 class OrderItemForm(forms.ModelForm):
     class Meta:
         model = OrderItem
         fields = ["product", "count"]
+        widgets = {
+            "count": forms.NumberInput(attrs={"min": "1"}),
+        }
 
     def clean_count(self):
         count = self.cleaned_data["count"]
@@ -80,8 +106,11 @@ OrderItemFormSet = inlineformset_factory(
     Order,
     OrderItem,
     form=OrderItemForm,
-    extra=1,
+    extra=2,
     can_delete=True,
     min_num=1,
+    # В макете и выданных данных у заказа предусмотрено не больше двух товарных позиций.
+    max_num=2,
     validate_min=True,
+    validate_max=True,
 )

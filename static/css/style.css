@@ -90,6 +90,23 @@ textarea {
     font: inherit;
 }
 
+input[type="checkbox"] {
+    width: auto;
+    min-width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.checkbox-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-row input[type="checkbox"] {
+    order: 2;
+}
+
 .toolbar input,
 .toolbar select {
     width: auto;
@@ -197,6 +214,11 @@ button {
     background: #ffffff;
 }
 
+.product-info {
+    padding: 8px 14px;
+    border: 1px solid #777777;
+}
+
 .product-info h2 {
     margin: 0 0 8px;
     font-size: 22px;
@@ -217,10 +239,6 @@ button {
 .old-price {
     color: #b00000;
     text-decoration: line-through;
-}
-
-.large-discount .old-price {
-    color: #ffe0e0;
 }
 
 .table {
@@ -244,6 +262,45 @@ button {
 .total {
     font-size: 22px;
     font-weight: bold;
+}
+
+.order-list {
+    display: grid;
+    gap: 14px;
+}
+
+.order-card {
+    display: grid;
+    grid-template-columns: 1fr 170px;
+    gap: 18px;
+    align-items: stretch;
+    padding: 12px 24px;
+    border: 3px solid #111111;
+    background: #ffffff;
+}
+
+.order-card-main {
+    display: grid;
+    gap: 5px;
+    padding: 10px 14px;
+    border: 2px solid #777777;
+    color: #111111;
+    text-decoration: none;
+}
+
+.order-card-main b {
+    display: inline-block;
+    min-width: 170px;
+}
+
+.order-card-date {
+    display: grid;
+    place-content: center;
+    gap: 8px;
+    min-height: 96px;
+    padding: 10px;
+    border: 3px solid #111111;
+    text-align: center;
 }
 
 .formset {
@@ -273,5 +330,15 @@ button {
 
     .discount {
         min-height: 52px;
+    }
+
+    .order-card {
+        grid-template-columns: 1fr;
+        padding: 12px;
+    }
+
+    .order-card-main b {
+        display: block;
+        min-width: 0;
     }
 }

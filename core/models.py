@@ -126,6 +126,7 @@ class Product(models.Model):
             old_photo = Product.objects.filter(pk=self.pk).values_list("photo", flat=True).first()
         super().save(*args, **kwargs)
         if old_photo and self.photo and old_photo != self.photo.name:
+            # При замене изображения старый файл больше не используется и должен быть удален.
             self.photo.storage.delete(old_photo)
         self._resize_photo()
 
@@ -141,6 +142,7 @@ class Product(models.Model):
         if not self.photo:
             return
         try:
+            # Локальное изменение размера доступно только для файловых хранилищ.
             photo_path = self.photo.path
         except NotImplementedError:
             return
@@ -154,17 +156,11 @@ class Product(models.Model):
 
 class Order(models.Model):
     STATUS_NEW = "new"
-    STATUS_PROCESSING = "processing"
-    STATUS_READY = "ready"
     STATUS_DONE = "done"
-    STATUS_CANCELLED = "cancelled"
 
     STATUS_CHOICES = [
         (STATUS_NEW, "Новый"),
-        (STATUS_PROCESSING, "В обработке"),
-        (STATUS_READY, "Готов к выдаче"),
-        (STATUS_DONE, "Выдан"),
-        (STATUS_CANCELLED, "Отменен"),
+        (STATUS_DONE, "Завершен"),
     ]
 
     order_date = models.DateField("Дата заказа")
@@ -198,6 +194,12 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Заказ #{self.pk}"
+
+    @property
+    def articles_summary(self):
+        # Макет заказа требует вывести пары "артикул, количество" в одной строке.
+        items = self.items.select_related("product")
+        return ", ".join(f"{item.product.article}, {item.count}" for item in items)
 
     @property
     def total_price(self):

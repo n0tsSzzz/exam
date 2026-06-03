@@ -10,7 +10,6 @@ from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
     DeleteView,
-    DetailView,
     ListView,
     UpdateView,
 )
@@ -57,6 +56,7 @@ class ProductListView(ListView):
 
         search = self.request.GET.get("search", "").strip()
         if search:
+            # Поиск должен работать сразу по всем текстовым данным товара и связанным справочникам.
             queryset = queryset.filter(
                 Q(article__icontains=search)
                 | Q(name__icontains=search)
@@ -131,20 +131,6 @@ class OrderListView(ManagerOrAdminRequiredMixin, LoginRequiredMixin, ListView):
     context_object_name = "orders"
 
     def get_queryset(self):
-        return Order.objects.select_related("pickup_point", "client")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["can_edit_orders"] = user_role(self.request.user) == Role.ADMIN
-        return context
-
-
-class OrderDetailView(ManagerOrAdminRequiredMixin, LoginRequiredMixin, DetailView):
-    model = Order
-    template_name = "core/order_detail.html"
-    context_object_name = "order"
-
-    def get_queryset(self):
         return Order.objects.select_related("pickup_point", "client").prefetch_related(
             "items__product"
         )
@@ -174,6 +160,7 @@ class OrderFormsetMixin(AdminRequiredMixin):
         formset = context["formset"]
         if not formset.is_valid():
             return self.form_invalid(form)
+        # Сначала сохраняем заказ, затем привязываем к нему строки состава заказа.
         self.object = form.save()
         formset.instance = self.object
         formset.save()
