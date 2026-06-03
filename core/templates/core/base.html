@@ -4,15 +4,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}ООО «Обувь»{% endblock %}</title>
+    <title>{% block title %}ООО ВелосипедДрайв{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="icon" href="{% static 'images/icon.png' %}">
 </head>
 <body>
     <header class="topbar">
         <a class="brand" href="{% url 'product_list' %}">
-            <img src="{% static 'images/logo.png' %}" alt="ООО Обувь">
-            <span>ООО «Обувь»</span>
+            <img src="{% static 'images/icon.png' %}" alt="ООО ВелосипедДрайв">
+            <span>ООО ВелосипедДрайв</span>
         </a>
         <nav class="nav">
             <a href="{% url 'product_list' %}">Товары</a>

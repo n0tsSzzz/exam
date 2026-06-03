@@ -15,7 +15,7 @@ from django.views.generic import (
 )
 
 from .forms import OrderForm, OrderItemFormSet, ProductForm
-from .models import Order, Product, Role, Supplier
+from .models import Order, Product, Role
 
 
 def user_role(user):
@@ -66,24 +66,34 @@ class ProductListView(ListView):
                 | Q(category__name__icontains=search)
             )
 
-        supplier = self.request.GET.get("supplier")
-        if supplier:
-            queryset = queryset.filter(supplier_id=supplier)
+        discount_range = self.request.GET.get("discount_range")
+        if discount_range == "0_11":
+            queryset = queryset.filter(discount__gte=0, discount__lte=11)
+        elif discount_range == "11_15":
+            queryset = queryset.filter(discount__gt=11, discount__lte=15)
+        elif discount_range == "15_30":
+            queryset = queryset.filter(discount__gt=15, discount__lte=30)
 
+        sort_fields = []
         sort_map = {
-            "quantity_asc": "quantity",
-            "quantity_desc": "-quantity",
+            "sort_quantity": "quantity",
+            "sort_price": "price",
+            "sort_discount": "discount",
         }
-        sort = self.request.GET.get("sort")
-        if sort in sort_map:
-            queryset = queryset.order_by(sort_map[sort])
+        for param, field_name in sort_map.items():
+            direction = self.request.GET.get(param)
+            if direction == "asc":
+                sort_fields.append(field_name)
+            elif direction == "desc":
+                sort_fields.append(f"-{field_name}")
+        if sort_fields:
+            queryset = queryset.order_by(*sort_fields)
         return queryset
 
     def get_context_data(self, **kwargs: Any):
         context = super().get_context_data(**kwargs)
         context["can_use_filters"] = user_role(self.request.user) in (Role.MANAGER, Role.ADMIN)
         context["can_edit_products"] = user_role(self.request.user) == Role.ADMIN
-        context["suppliers"] = Supplier.objects.all()
         context["current"] = self.request.GET
         return context
 

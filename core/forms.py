@@ -52,9 +52,16 @@ class ProductForm(forms.ModelForm):
             return photo
         try:
             image = Image.open(photo)
+            width, height = image.size
             image.verify()
         except Exception as exc:
             raise forms.ValidationError("Загрузите корректное изображение.") from exc
+
+        if width > 300 or height > 200:
+            raise forms.ValidationError(
+                "Размер изображения не должен превышать 300x200 пикселей."
+            )
+
         photo.seek(0)
         return photo
 

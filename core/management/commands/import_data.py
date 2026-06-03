@@ -75,7 +75,6 @@ class Command(BaseCommand):
         with open(path, encoding="utf-8-sig", newline="") as file:
             reader = csv.reader(file, delimiter=";")
             for row in reader:
-                print(row)
                 if not row:
                     continue
 
@@ -95,7 +94,6 @@ class Command(BaseCommand):
         with open(path, encoding="utf-8-sig", newline="") as file:
             reader = csv.DictReader(file, delimiter=self.get_delimiter(file))
             for row in reader:
-                print(row)
                 article = self.value(row, "article", "артикул")
                 if not article:
                     continue
@@ -144,7 +142,6 @@ class Command(BaseCommand):
         with open(path, encoding="utf-8-sig", newline="") as file:
             reader = csv.DictReader(file, delimiter=self.get_delimiter(file))
             for row in reader:
-                print(row)
                 login = self.value(row, "login", "логин", "email")
                 password = self.value(row, "password", "пароль")
                 full_name = self.value(row, "full_name", "фио") or login
@@ -179,7 +176,6 @@ class Command(BaseCommand):
         with open(path, encoding="utf-8-sig", newline="") as file:
             reader = csv.DictReader(file, delimiter=self.get_delimiter(file))
             for row in reader:
-                print(row)
                 order_id = self.integer(self.value(row, "id", "номер заказа"))
                 if not order_id:
                     continue

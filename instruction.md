@@ -237,9 +237,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 Из архива Приложения 2 скопировать:
 - `picture.png` → `static/images/picture.png`
-- `Icon.png` → `static/images/Icon.png`
+- `Icon.png` → `static/images/icon.png`
 - `Icon.ico` → `static/images/Icon.ico`
-- логотип → `static/images/logo.png` (или как называется в ресурсах)
+- логотип → `static/images/icon.png` (или как называется в ресурсах)
 
 ---
 
@@ -684,7 +684,7 @@ python manage.py import_data
     <!-- Шапка с логотипом и ФИО пользователя -->
     <header class="header">
         <div class="header-left">
-            <img src="{% static 'images/logo.png' %}" alt="Логотип ООО Обувь" class="logo">
+            <img src="{% static 'images/icon.png' %}" alt="Логотип ООО Обувь" class="logo">
             <span class="company-name">ООО «Обувь»</span>
         </div>
         <div class="header-right">
@@ -728,7 +728,7 @@ python manage.py import_data
     <div class="login-page">
         <!-- Логотип на главной форме -->
         <div class="login-logo">
-            <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo-large">
+            <img src="{% static 'images/icon.png' %}" alt="Логотип" class="logo-large">
         </div>
 
         <div class="login-container">
@@ -949,7 +949,7 @@ if settings.DEBUG:
 <body>
     <header class="header">
         <div class="header-left">
-            <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo">
+            <img src="{% static 'images/icon.png' %}" alt="Логотип" class="logo">
             <span class="company-name">ООО «Обувь»</span>
         </div>
         <div class="header-right">
@@ -1693,38 +1693,22 @@ def product_update_view(request, pk):
     })
 
 
-def resize_product_image(product, image_file):
+def validate_product_image(image_file):
     """
-    Обрабатывает изображение через Pillow:
-    изменяет размер до 300x200 пикселей и сохраняет.
+    Проверяет изображение через Pillow:
+    размер не должен превышать 300x200 пикселей.
     """
     from PIL import Image as PilImage
-    from io import BytesIO
-    from django.core.files.uploadedfile import InMemoryUploadedFile
-    import sys
+    from django.core.exceptions import ValidationError
 
-    # Открываем изображение через Pillow
     img = PilImage.open(image_file)
+    width, height = img.size
 
-    # Изменяем размер до 300x200 (с сохранением пропорций через thumbnail)
-    img = img.resize((300, 200), PilImage.LANCZOS)
+    if width > 300 or height > 200:
+        raise ValidationError('Размер изображения не должен превышать 300x200 пикселей.')
 
-    # Сохраняем обратно в память
-    output = BytesIO()
-    img_format = img.format if img.format else 'JPEG'
-    img.save(output, format=img_format, quality=85)
-    output.seek(0)
-
-    # Создаём новый файл для Django
-    product.image = InMemoryUploadedFile(
-        output,
-        'ImageField',
-        image_file.name,
-        f'image/{img_format.lower()}',
-        sys.getsizeof(output),
-        None
-    )
-    return product
+    image_file.seek(0)
+    return image_file
 ```
 
 ### Шаг 10.3 — Создать шаблон product_form.html
@@ -1744,7 +1728,7 @@ def resize_product_image(product, image_file):
 <body>
     <header class="header">
         <div class="header-left">
-            <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo">
+            <img src="{% static 'images/icon.png' %}" alt="Логотип" class="logo">
             <span class="company-name">ООО «Обувь»</span>
         </div>
         <div class="header-right">
@@ -2024,7 +2008,7 @@ def order_delete_view(request, pk):
 <body>
     <header class="header">
         <div class="header-left">
-            <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo">
+            <img src="{% static 'images/icon.png' %}" alt="Логотип" class="logo">
             <span class="company-name">ООО «Обувь»</span>
         </div>
         <div class="header-right">
@@ -2105,7 +2089,7 @@ def order_delete_view(request, pk):
 <body>
     <header class="header">
         <div class="header-left">
-            <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo">
+            <img src="{% static 'images/icon.png' %}" alt="Логотип" class="logo">
             <span class="company-name">ООО «Обувь»</span>
         </div>
         <div class="header-right">

@@ -2,7 +2,6 @@ from decimal import Decimal
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from PIL import Image
 
 
 class Role(models.Model):
@@ -40,11 +39,6 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "пользователь"
         verbose_name_plural = "пользователи"
-
-    @property
-    def role_name(self):
-        return self.role.name if self.role else ""
-
 
 class NamedModel(models.Model):
     name = models.CharField("Название", max_length=200, unique=True)
@@ -128,7 +122,6 @@ class Product(models.Model):
         if old_photo and self.photo and old_photo != self.photo.name:
             # При замене изображения старый файл больше не используется и должен быть удален.
             self.photo.storage.delete(old_photo)
-        self._resize_photo()
 
     def delete(self, *args, **kwargs):
         photo_name = self.photo.name if self.photo else None
@@ -137,22 +130,6 @@ class Product(models.Model):
         if photo_name and storage:
             storage.delete(photo_name)
         return result
-
-    def _resize_photo(self):
-        if not self.photo:
-            return
-        try:
-            # Локальное изменение размера доступно только для файловых хранилищ.
-            photo_path = self.photo.path
-        except NotImplementedError:
-            return
-        try:
-            with Image.open(photo_path) as image:
-                image.thumbnail((300, 200))
-                image.save(photo_path)
-        except OSError:
-            return
-
 
 class Order(models.Model):
     STATUS_NEW = "new"

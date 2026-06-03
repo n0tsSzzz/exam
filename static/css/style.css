@@ -6,11 +6,11 @@ body {
     margin: 0;
     background: #ffffff;
     color: #111111;
-    font-family: "Times New Roman", serif;
+    font-family: Arial, sans-serif;
 }
 
 a {
-    color: #006b3c;
+    color: #4b0082;
 }
 
 .topbar {
@@ -19,7 +19,7 @@ a {
     justify-content: space-between;
     gap: 16px;
     padding: 12px 24px;
-    background: #7fff00;
+    background: #6a5acd;
     border-bottom: 2px solid #111111;
 }
 
@@ -27,7 +27,7 @@ a {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: #111111;
+    color: #ffffff;
     text-decoration: none;
     font-size: 30px;
     font-weight: bold;
@@ -50,8 +50,13 @@ a {
     margin: 0;
 }
 
+.nav a {
+    color: #ffffff;
+}
+
 .user {
     font-weight: bold;
+    color: #ffffff;
 }
 
 .container {
@@ -77,7 +82,7 @@ h1 {
     align-items: center;
     padding: 12px;
     margin-bottom: 18px;
-    background: #f7fff0;
+    background: #f3f1ff;
 }
 
 input,
@@ -118,8 +123,8 @@ button {
     display: inline-block;
     padding: 8px 14px;
     border: 1px solid #111111;
-    background: #00fa9a;
-    color: #111111;
+    background: #4b0082;
+    color: #ffffff;
     cursor: pointer;
     font: inherit;
     text-decoration: none;
@@ -127,17 +132,19 @@ button {
 
 .btn.secondary {
     background: #ffffff;
+    color: #111111;
 }
 
 .btn.danger {
     background: #ffdddd;
+    color: #111111;
 }
 
 .link-button {
     border: 0;
     padding: 0;
     background: transparent;
-    color: #006b3c;
+    color: #ffffff;
     text-decoration: underline;
 }
 
@@ -197,12 +204,12 @@ button {
 }
 
 .product-card.large-discount {
-    background: #2e8b57;
+    background: #483d8b;
     color: #ffffff;
 }
 
 .product-card.out-of-stock {
-    background: #bdefff;
+    background: #d9d9d9;
     color: #111111;
 }
 
@@ -232,6 +239,8 @@ button {
     display: grid;
     place-items: center;
     border: 1px solid currentColor;
+    background: inherit;
+    color: inherit;
     font-size: 26px;
     font-weight: bold;
 }
@@ -256,7 +265,8 @@ button {
 }
 
 .table th {
-    background: #7fff00;
+    background: #6a5acd;
+    color: #ffffff;
 }
 
 .total {
